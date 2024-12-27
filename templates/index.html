@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JYOTI-7686</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .header {
+      width: 100%;
+      background-color: #0066cc;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .header img {
+      height: 100px;
+    }
+    .header h1 {
+      margin: 10px 0 0;
+      color: #ffff00;
+      font-size: 2em;
+    }
+    .container {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 900px;
+      background: #2e2e3f;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table th, table td {
+      border: 1px solid #444;
+      padding: 15px;
+      text-align: center;
+    }
+    table th {
+      background-color: #0066cc;
+      color: #00ff00;
+      font-weight: bold;
+    }
+    table tr:nth-child(even) {
+      background-color: #38384f;
+    }
+    table tr:nth-child(odd) {
+      background-color: #2e2e3f;
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #bbb;
+    }
+  </style>
+  <script>
+    async function fetchData() {
+      const response = await fetch("/data");
+      const data = await response.json();
+
+      document.getElementById("machineStatus").textContent = data.machine_status;
+      document.getElementById("cycle").textContent = data.cycle;
+      document.getElementById("cycle_time").textContent = data.cycle_time;
+      document.getElementById("qty_ms").textContent = data.qty_ms;
+    }
+
+    setInterval(fetchData, 1000); // Fetch data every second
+  </script>
+</head>
+<body>
+
+
+  <div class="header">
+    <h1>CNC LATHE</h1>
+    
+    <h1>JYOTI-7686</h1>
+  </div>
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Machine Status</td>
+          <td id="machineStatus">Loading...</td>
+        </tr>
+        <tr>
+          <td>Cycle</td>
+          <td id="cycle">Loading...</td>
+        </tr>
+        <tr>
+          <td>Cycle Time</td>
+          <td id="cycle_time">Loading...</td>
+        </tr>
+        <tr>
+          <td>Qty</td>
+          <td id="qty_ms">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+    <footer>&copy;TOOL ROOM- MIL</footer>
+  </div>
+</body>
+</html>
