@@ -13,11 +13,24 @@ const int pinMachineOn = D0;
 const int pinCycleStart = D1;
 const int pinCycleStop = D2;
 
+unsigned long cycleStartTime = 0; // Time when the cycle starts
+unsigned long cycleStopTime = 0;  // Time when the cycle stops
+unsigned long cycleDuration = 0; // Duration of the cycle
+int cycleCount = 0;              // Counter for completed cycles
+
+bool isCycleRunning = false;     // Track if a cycle is in progress
+
 // Variables to store cycle times
 
 
+static int machine_count = 0;
+static unsigned long duration = 0;
+
+static unsigned long qty = 0;
+
+
+
 // Flags for tracking states
-bool isCycleRunning = false;
 
 void setup() {
   Serial.begin(115200);
@@ -41,16 +54,64 @@ void setup() {
 
 void loop() {
   // Read pin states
+  // Read pin states
   int machineOnState = digitalRead(pinMachineOn);
   int cycleStartState = digitalRead(pinCycleStart);
   int cycleStopState = digitalRead(pinCycleStop);
 
+  // If the cycle starts
+  if (cycleStartState == HIGH) {
+    if (cycleStartTime == 0) { // Record the start time only once
+      cycleStartTime = millis() / 1000; // Convert milliseconds to seconds
+    }
 
-sendDataToServer(machineOnState, cycleStartState, cycleStopState, 9); // Send data when machine is off
+    unsigned long currentCycleTime = millis() / 1000; // Current time in seconds
+     duration = currentCycleTime - cycleStartTime; // Calculate duration
 
+    Serial.print("Cycle duration (seconds): ");
+    Serial.println(duration);
+    
 
+    // Send data to the server
+    sendDataToServer(machineOnState, 1, duration, 0);
+  }
 
-  delay(1000); // Small delay for stability
+  // Reset the cycle start time when the cycle ends
+  if (cycleStartState == LOW) {
+   // cycleStartTime = 0; // Reset start time
+   // machine_count++;
+       if (cycleStartTime != 0) {  // Only reset when cycle was started
+      cycleStartTime = 0;  // Reset start time
+      qty++;         // Increment the cycle count
+
+      Serial.print("Cycle ended. Total cycles: ");
+      Serial.println(qty);
+
+      // Send the cycle count to the server
+     sendDataToServer(machineOnState, 0,duration, qty);
+    }
+   
+
+    //sendDataToServer(machineOnState, 0,duration, 1);
+  }
+
+  delay(1000); // Delay for stability
+
+/*
+  // If machine is ON and a cycle stops
+  if (machineOnState == HIGH && cycleStopState == HIGH && isCycleRunning) {
+    cycleStopTime = millis(); // Record stop time
+    cycleDuration = cycleStopTime - cycleStartTime; // Calculate duration
+    cycleCount++; // Increment the cycle count
+
+    // Send data to the server
+    sendDataToServer(machineOnState, cycleStartTime, cycleStopTime, cycleCount);
+
+    isCycleRunning = false; // Reset cycle status
+  }
+*/
+  // Small delay for stability
+  delay(100);
 }
 
 void sendDataToServer(int machineStatus, int startTime, int endTime, int duration) {
@@ -64,7 +125,7 @@ void sendDataToServer(int machineStatus, int startTime, int endTime, int duratio
     String jsonPayload = "{";
     jsonPayload += "\"machine_status\":\"" + String(machineStatus == HIGH ? "ON" : "OFF") + "\",";
     jsonPayload += "\"cycle\":\"" + String(startTime == HIGH ? "START" : "STOP") + "\",";
-    jsonPayload += "\"cycle_time\":\"" + String(endTime == HIGH ? "5.00" : "0.00") + "\",";
+    jsonPayload += "\"cycle_time\":\"" + String(endTime) + "\",";
     jsonPayload += "\"qty_ms\":" + String(duration);
     jsonPayload += "}";
 
