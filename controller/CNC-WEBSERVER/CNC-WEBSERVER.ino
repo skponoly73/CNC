@@ -48,42 +48,6 @@ void loop() {
 
 sendDataToServer(machineOnState, cycleStartState, cycleStopState, 9); // Send data when machine is off
 
-/*
-  if (machineOnState == HIGH) {
-    Serial.println("Machine is ON.");
- sendDataToServer(1, 0, 0, 0); // Send data when cycle starts
-
-     // Check if cycle start is triggered
-    if (cycleStartState == HIGH ) {
-    //  cycleStartTime = millis();
-     // isCycleRunning = true;
-      Serial.println("Cycle started.");
-      sendDataToServer(1, 1, 0, 0); // Send data when cycle stops
-     
-    }
-
-    // Check if cycle stop is triggered
-    if (cycleStopState == LOW ) {
-     // cycleEndTime = millis();
-    //  cycleDuration = cycleEndTime - cycleStartTime;
-     // isCycleRunning = false;
-
-      Serial.println("Cycle stopped.");
-      sendDataToServer(1, 0, 0, 0); // Send data when cycle stops
-    }
-    
-  }
-      
-
-
- else {
-    Serial.println("Machine is OFF.");
-    sendDataToServer(0, 0, 0, 0); // Send data when machine is off
-  }
-
-*/
-
-
 
 
   delay(1000); // Small delay for stability
